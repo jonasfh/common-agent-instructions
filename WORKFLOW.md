@@ -33,6 +33,11 @@ Once a GitHub issue is identified or created, follow this workflow:
    - Check PR checks status (`gh pr checks <id>`).
    - Merge method: ALWAYS use **Rebase and merge** (`gh pr merge <id> --rebase --delete-branch`) as the default strategy. If rebasing issues or conflicts arise, use a standard **merge commit** (`gh pr merge <id> --merge --delete-branch`). Do NOT use squash and merge (`--squash`) unless explicitly instructed or required for a specific reason.
 
+## Development Environment & Devcontainers
+
+- **Prefer Devcontainer Environments**: Developing inside a devcontainer (`.devcontainer/`) is preferred to ensure reproducible, isolated toolchains and runtime dependencies across agents and human developers.
+- **Task-Driven Environment Customization**: Always allow and proactively customize the development environment (e.g. updating `.devcontainer/devcontainer.json`, `Dockerfile`, installing system packages, CLI tools, runtime versions, or language toolchains) whenever necessary to fit the requirements of the task.
+
 ## Versioning & Changelog
 
 - **Version Bump**: Bump the semantic version in package configuration/manifests on functional changes.
