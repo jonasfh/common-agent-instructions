@@ -5,7 +5,7 @@ This repository serves as a centralized, technology-agnostic knowledge base of d
 
 ## Modular Sub-guidelines
 
-- 🔄 **[Workflow Guidelines](file:///./WORKFLOW.md)**: GitHub issue-driven development, branching patterns, commit conventions, PR merge strategies, SemVer versioning, CHANGELOG maintenance, and self-improvement feedback loops.
+- 🔄 **[Workflow Guidelines](file:///./WORKFLOW.md)**: GitHub issue-driven development, devcontainer environment preference and customization, branching patterns, commit conventions, PR merge strategies, SemVer versioning, CHANGELOG maintenance, and self-improvement feedback loops.
 - 📝 **[Documentation Standards](file:///./DOCUMENTATION.md)**: User-facing vs. developer documentation, continuous documentation synchronization, and Mermaid diagram constraints.
 - 🧪 **[Testing & Quality Assurance](file:///./TESTING.md)**: Automated testing requirements, zero-lint policy, and formatting hygiene.
 - 📐 **[Architecture Standards](file:///./ARCHITECTURE.md)**: Modularity, separation of concerns, and universal database timestamp rules.
