@@ -32,9 +32,10 @@ Once a GitHub issue is identified or created, follow this workflow:
    - Create Pull Request: `gh pr create --body "Closes #<id>" --title "(#<id>) <Issue Title>"`.
 6. **Issue Status & Feedback**:
    - Add implementation notes and summary to the GitHub issue (`gh issue comment <id> --body "..."`).
-7. **Pull Request Completion & Pause**:
-   - Check PR checks status (`gh pr checks <id>`).
-   - **Stop and Wait**: Once the PR is created, verified, and ready, the AI MUST STOP and wait for explicit user confirmation before merging. Do NOT merge automatically.
+7. **Pull Request Completion & Hand-off**:
+   - **Stop and Return Prompt**: Once implementation is complete, changes committed and pushed, and the PR is created, the AI agent MUST STOP immediately and return the prompt to the user.
+   - **Do NOT Wait for Workflows**: Do NOT wait for PR validation workflows, CI checks, or background pipelines to complete.
+   - **Do NOT Merge Automatically**: The agent must NEVER merge the PR automatically.
 8. **Merging Pull Requests**:
    - Only proceed with merging after receiving explicit user instruction to do so.
    - Merge method: ALWAYS use **Rebase and merge** (`gh pr merge <id> --rebase --delete-branch`) as the default strategy. If rebasing issues or conflicts arise, use a standard **merge commit** (`gh pr merge <id> --merge --delete-branch`). Do NOT use squash and merge (`--squash`) unless explicitly instructed or required for a specific reason.
