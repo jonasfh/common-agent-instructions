@@ -6,18 +6,26 @@ All changes made to a project MUST be based on an associated GitHub issue or dir
 
 Once a GitHub issue is identified or created, follow this workflow:
 
-1. **Preparation & Submodule Updates**:
+1. **Preparation**:
    - Start in `main` branch and pull latest changes: `git pull origin main`.
    - Verify GitHub authentication: `gh auth status` (Note: `gh` CLI commands require network access; bypass sandbox isolation if running in a restricted sandbox).
    - Read issue details: `gh issue view <id> --json title,body`.
 2. **Branching**:
-   - Create and check out a dedicated branch following the pattern: `gh-issue/<id>` (e.g., `gh-issue/39`), branched off `main`.
+   - Create and check out a dedicated development branch following the pattern: `gh-issue/<id>` (e.g., `gh-issue/39`), branched off `main`.
    - For security or dependency alerts, use `sec-<ids>-...` or `dep-<ids>-...`.
-3. **Submodule Updates at Startup**:
-   After dev branch is checked out, update all submodules under
-   `.agents/` (`git submodule update --remote`). If any submodule pointer
-   changes, commit the updated submodule pointer(s) directly to the repository
-   in a separate commit, using the current branch.
+3. **Submodule Updates on Development Branch**:
+   - **Check for Latest Guidelines**: Immediately after checking out the development branch, pull the latest `main` branch for all submodules under `.agents/`. Do not rely on plain `git submodule update` (which only checks out the old pinned commit) or `git submodule update --remote` (which creates a detached HEAD):
+     ```bash
+     # Sjekk ut og pull nyeste main for felles- og språkspesifikke instruksjoner:
+     git -C .agents/common-agent-instructions checkout main && git -C .agents/common-agent-instructions pull origin main
+     ```
+     (Gjenta tilsvarende for eventuelle andre submoduler under `.agents/`, f.eks. `python-agent-instructions` eller `node-agent-instructions`).
+   - **Commit Updated Submodule Pointers**: Check `git status`. If any submodule pointer has changed (`modified: .agents/...`), immediately stage and commit the updated submodule pointer(s) in a separate commit on the current feature branch:
+     ```bash
+     git add .agents/
+     git commit -m "Update .agents submodules pointer"
+     ```
+   - **Rationale**: This ensures every new development task always executes with the latest agent guidelines, keeps `main` clean, avoids detached HEAD states, and rolls submodule pointer updates naturally into `main` via the regular feature PR.
 4. **Implementation Plan**:
    - When resolving issues, an implementation plan MUST be presented before making code changes, unless the task is very small and does not require planning.
 5. **Implementation**:
