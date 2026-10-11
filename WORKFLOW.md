@@ -8,20 +8,24 @@ Once a GitHub issue is identified or created, follow this workflow:
 
 1. **Preparation & Submodule Updates**:
    - Start in `main` branch and pull latest changes: `git pull origin main`.
-   - **Submodule Updates at Startup**: At session startup or before beginning work, update all submodules under `.agents/` (`git submodule update --remote`). If any submodule pointer changes, commit the updated submodule pointer(s) directly to the repository in a separate commit (no separate GitHub issue is required for submodule pointer updates).
    - Verify GitHub authentication: `gh auth status` (Note: `gh` CLI commands require network access; bypass sandbox isolation if running in a restricted sandbox).
    - Read issue details: `gh issue view <id> --json title,body`.
 2. **Branching**:
    - Create and check out a dedicated branch following the pattern: `gh-issue/<id>` (e.g., `gh-issue/39`), branched off `main`.
    - For security or dependency alerts, use `sec-<ids>-...` or `dep-<ids>-...`.
-3. **Implementation Plan**:
+3. **Submodule Updates at Startup**:
+   After dev branch is checked out, update all submodules under
+   `.agents/` (`git submodule update --remote`). If any submodule pointer
+   changes, commit the updated submodule pointer(s) directly to the repository
+   in a separate commit, using the current branch.
+4. **Implementation Plan**:
    - When resolving issues, an implementation plan MUST be presented before making code changes, unless the task is very small and does not require planning.
-4. **Implementation**:
+5. **Implementation**:
    - Resolve the issue adhering to project coding standards and architecture.
    - Routinely run project formatters whenever files are created or modified.
    - Create or update automated tests and ensure all linters and test suites pass.
    - Update project documentation (`README.md`, `DEV_README.md`, `docs/`) for any new features, endpoints, schemas, or models implemented.
-5. **Submission & Commit Messages**:
+6. **Submission & Commit Messages**:
    - **Formatting Hygiene**: ALWAYS run repository formatting tools immediately before staging files (`git add`) and committing.
    - **Commit Message Format**:
      - Within the same repository: Issue commits MUST start with `(#<id>)`, e.g., `(#1) Fixed xxx...`.
@@ -30,13 +34,13 @@ Once a GitHub issue is identified or created, follow this workflow:
    - **Commit Suggestion**: ALWAYS suggest a commit message as plain text in a copy-pasteable code block. Focus on the problem solved in the header, with rationale in the body.
    - Push branch: `git push -u origin HEAD`.
    - Create Pull Request: `gh pr create --body "Closes #<id>" --title "(#<id>) <Issue Title>"`.
-6. **Issue Status & Feedback**:
+7. **Issue Status & Feedback**:
    - Add implementation notes and summary to the GitHub issue (`gh issue comment <id> --body "..."`).
-7. **Pull Request Completion & Hand-off**:
+8. **Pull Request Completion & Hand-off**:
    - **Stop and Return Prompt**: Once implementation is complete, changes committed and pushed, and the PR is created, the AI agent MUST STOP immediately and return the prompt to the user.
    - **Do NOT Wait for Workflows**: Do NOT wait for PR validation workflows, CI checks, or background pipelines to complete.
    - **Do NOT Merge Automatically**: The agent must NEVER merge the PR automatically.
-8. **Merging Pull Requests**:
+9. **Merging Pull Requests**:
    - Only proceed with merging after receiving explicit user instruction to do so.
    - Merge method: ALWAYS use **Rebase and merge** (`gh pr merge <id> --rebase --delete-branch`) as the default strategy. If rebasing issues or conflicts arise, use a standard **merge commit** (`gh pr merge <id> --merge --delete-branch`). Do NOT use squash and merge (`--squash`) unless explicitly instructed or required for a specific reason.
 
