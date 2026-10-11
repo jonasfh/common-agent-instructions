@@ -28,7 +28,7 @@ Once a GitHub issue is identified or created, follow this workflow:
      - Within a submodule or cross-repository referencing another repo's issue: Commits MUST start with `(<owner>/<repo>#<id>)`, e.g., `(jonasfh/snippen-sms-service#39) Fixed xxx...`.
      - Make separate commits for different issue numbers.
    - **Commit Suggestion**: ALWAYS suggest a commit message as plain text in a copy-pasteable code block. Focus on the problem solved in the header, with rationale in the body.
-   - Push branch: `git push origin gh-issue/<id>`.
+   - Push branch: `git push -u origin HEAD`.
    - Create Pull Request: `gh pr create --body "Closes #<id>" --title "(#<id>) <Issue Title>"`.
 6. **Issue Status & Feedback**:
    - Add implementation notes and summary to the GitHub issue (`gh issue comment <id> --body "..."`).
