@@ -23,7 +23,7 @@ Once a GitHub issue is identified or created, follow this workflow:
    - **Commit Updated Submodule Pointers**: Check `git status`. If any submodule pointer has changed (`modified: .agents/...`), immediately stage and commit the updated submodule pointer(s) in a separate commit on the current feature branch:
      ```bash
      git add .agents/
-     git commit -m "Update .agents submodules pointer"
+     git commit -m "chore(agents): update .agents submodule pointers (#<id>)"
      ```
    - **Rationale**: This ensures every new development task always executes with the latest agent guidelines, keeps `main` clean, avoids detached HEAD states, and rolls submodule pointer updates naturally into `main` via the regular feature PR.
 4. **Implementation Plan**:
@@ -33,15 +33,18 @@ Once a GitHub issue is identified or created, follow this workflow:
    - Routinely run project formatters whenever files are created or modified.
    - Create or update automated tests and ensure all linters and test suites pass.
    - Update project documentation (`README.md`, `DEV_README.md`, `docs/`) for any new features, endpoints, schemas, or models implemented.
-6. **Submission & Commit Messages**:
+6. **Submission & Commit Messages (Conventional Commits v1.0.0)**:
    - **Formatting Hygiene**: ALWAYS run repository formatting tools immediately before staging files (`git add`) and committing.
-   - **Commit Message Format**:
-     - Within the same repository: Issue commits MUST start with `(#<id>)`, e.g., `(#1) Fixed xxx...`.
-     - Within a submodule or cross-repository referencing another repo's issue: Commits MUST start with `(<owner>/<repo>#<id>)`, e.g., `(jonasfh/snippen-sms-service#39) Fixed xxx...`.
+   - **Commit Message Format**: Follow [Conventional Commits v1.0.0](https://www.conventionalcommits.org/) for all commits and PR titles (`<type>[optional scope][!]: <description> (#<id>)`):
+     - Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
+     - Description MUST start with a lowercase letter, use imperative mood, and omit a trailing period.
+     - **Same repository**: Append `(#<id>)` to the header and include `Closes #<id>` (or `Refs #<id>`) in the body/footer, e.g., `feat(ble): harmonize client with yalexs-ble v10 (#87)`.
+     - **Submodule or cross-repository**: Append `(<owner>/<repo>#<id>)` to the header and `Refs: <owner>/<repo>#<id>` in the footer, e.g., `docs(workflow): adopt conventional commits (jonasfh/snippen-doorman-service#87)`.
+     - Use the `conventional-commits` skill (`.agents/common-agent-instructions/skills/conventional-commits/SKILL.md`) for detailed checklists and local validation via `validate_commit.py`.
      - Make separate commits for different issue numbers.
    - **Commit Suggestion**: ALWAYS suggest a commit message as plain text in a copy-pasteable code block. Focus on the problem solved in the header, with rationale in the body.
    - Push branch: `git push -u origin HEAD`.
-   - Create Pull Request: `gh pr create --body "Closes #<id>" --title "(#<id>) <Issue Title>"`.
+   - Create Pull Request: `gh pr create --body "Closes #<id>" --title "<type>[optional scope][!]: <description> (#<id>)"`.
 7. **Issue Status & Feedback**:
    - Add implementation notes and summary to the GitHub issue (`gh issue comment <id> --body "..."`).
 8. **Pull Request Completion & Hand-off**:
@@ -59,7 +62,12 @@ Once a GitHub issue is identified or created, follow this workflow:
 
 ## Versioning & Changelog
 
-- **Version Bump**: Bump the semantic version in package configuration/manifests on functional changes.
+- **SemVer Mapping (Conventional Commits)**:
+  - `fix:` → **PATCH** (`0.0.X`)
+  - `feat:` → **MINOR** (`0.X.0`)
+  - `feat!:` / `fix!:` / `BREAKING CHANGE:` footer → **MAJOR** (`X.0.0`)
+  - `docs:`, `chore:`, `ci:`, `test:`, `refactor:`, `style:`, `build:`, `perf:` → no version bump required unless functional/packaging behavior changes (or bump PATCH if repository PR validation strictly requires `__version__ > latest_tag`).
+- **Version Bump**: Bump the semantic version in package configuration/manifests accordingly.
 - **CHANGELOG.md**: Every version bump must have an entry in `CHANGELOG.md` under `## [X.Y.Z] - YYYY-MM-DD`.
 
 ## Formatting & Whitespace Hygiene
@@ -78,4 +86,4 @@ All project files (code, Markdown, JSON, YAML, TOML, etc.) must adhere to strict
 
 - Refer to alerts using full GitHub URLs, e.g., `https://github.com/<owner>/<repo>/security/dependabot/<alert_id>`.
 - Use branches like `dep-<ids>-fix-dependabot-issues` or `sec-<ids>-fix-code-scanning-issues`.
-- Format commit headers as `(dep-<ids>) Description` or `(sec-<ids>) Description`.
+- Format commit headers as `fix(deps): <description> (dep-<ids>)` or `fix(security): <description> (sec-<ids>)`.
