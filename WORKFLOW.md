@@ -4,6 +4,11 @@
 
 All changes made to a project MUST be based on an associated GitHub issue or direct Code Scanning / Dependabot alert IDs. If a task or instruction is given without an associated issue, create a GitHub issue containing the details of the work to be done (`gh issue create`) before starting.
 
+### Complexity Triage & Execution Paths
+At the start of a task, the primary agent automatically selects the appropriate execution path based on [ROLES.md](file:///./ROLES.md):
+- **Single-Agent Fast Path (Level 1):** Small, well-scoped tasks (1–2 files, single domain). Executed directly by one agent.
+- **Multi-Agent Path (Level 2 / Level 3):** Medium or large tasks spanning multiple modules, requiring broad exploration, parallel implementation, or independent verification.
+
 Once a GitHub issue is identified or created, follow this workflow:
 
 1. **Preparation**:
@@ -16,23 +21,25 @@ Once a GitHub issue is identified or created, follow this workflow:
 3. **Submodule Updates on Development Branch**:
    - **Check for Latest Guidelines**: Immediately after checking out the development branch, pull the latest `main` branch for all submodules under `.agents/`. Do not rely on plain `git submodule update` (which only checks out the old pinned commit) or `git submodule update --remote` (which creates a detached HEAD):
      ```bash
-     # Sjekk ut og pull nyeste main for felles- og språkspesifikke instruksjoner:
      git -C .agents/common-agent-instructions checkout main && git -C .agents/common-agent-instructions pull origin main
      ```
-     (Gjenta tilsvarende for eventuelle andre submoduler under `.agents/`, f.eks. `python-agent-instructions` eller `node-agent-instructions`).
+     (Repeat for any other submodules under `.agents/`, e.g., `php-agent-instructions`, `node-agent-instructions`, `diagram-agent-instructions`.)
    - **Commit Updated Submodule Pointers**: Check `git status`. If any submodule pointer has changed (`modified: .agents/...`), immediately stage and commit the updated submodule pointer(s) in a separate commit on the current feature branch:
      ```bash
      git add .agents/
      git commit -m "Update .agents submodules pointer"
      ```
    - **Rationale**: This ensures every new development task always executes with the latest agent guidelines, keeps `main` clean, avoids detached HEAD states, and rolls submodule pointer updates naturally into `main` via the regular feature PR.
-4. **Implementation Plan**:
-   - When resolving issues, an implementation plan MUST be presented before making code changes, unless the task is very small and does not require planning.
+4. **Implementation Plan (Approval Gate)**:
+   - **Level 1 (Fast Path):** Present a brief inline plan if non-trivial, then proceed.
+   - **Level 2 / Level 3 (Multi-Agent Path):** The **Coordinator** uses `/plan` (and `/grill-me` if requirements are ambiguous) to define interfaces, file ownership, and role assignments (`issue-breakdown` skill). **Stop and wait for user approval after `/plan`** before launching parallel implementation workers.
 5. **Implementation**:
-   - Resolve the issue adhering to project coding standards and architecture.
-   - Routinely run project formatters whenever files are created or modified.
-   - Create or update automated tests and ensure all linters and test suites pass.
-   - Update project documentation (`README.md`, `DEV_README.md`, `docs/`) for any new features, endpoints, schemas, or models implemented.
+   - **Level 1 (Fast Path):** Resolve the issue adhering to project coding standards, run formatters, create/update tests, and verify all linters/tests pass.
+   - **Level 2 / Level 3 (Multi-Agent Path):**
+     - Assign bounded, non-overlapping slices to **Implementer** workers in isolated workspaces (`git worktree` or Antigravity `workspace: "share"` / `"branch"`).
+     - Coordinator integrates worker changes back into `gh-issue/<id>` (no extra user approval gate required before integrating worker branches).
+     - An independent **Verifier** agent (that did not author the implementation) runs the full required test, lint, and build checks (`independent-verification` skill).
+     - Coordinator (or **Reviewer**) ensures documentation (`README.md`, `DEV_README.md`, `docs/`), version bump, and `CHANGELOG.md` are updated (`pr-review` skill).
 6. **Submission & Commit Messages**:
    - **Formatting Hygiene**: ALWAYS run repository formatting tools immediately before staging files (`git add`) and committing.
    - **Commit Message Format**:
